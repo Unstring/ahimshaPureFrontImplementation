@@ -1,74 +1,74 @@
 import { Routes, Route } from 'react-router-dom';
+import { lazy, Suspense } from 'react';
+import { Outlet } from 'react-router-dom';
 import Layout from '../components/layout/Layout';
 import PrivateRoute from './PrivateRoute';
 import PublicRoute from './PublicRoute';
 import { ROUTES } from '../config/constants';
 
-// Page Imports
-import Home from '../pages/Home';
-import About from '../pages/About';
-import Products from '../pages/Products';
-import Contact from '../pages/Contact';
-import Login from '../components/Login';
-import Dashboard from '../pages/Dashboard';
-import Profile from '../pages/Profile';
-import Terms from '../pages/legal/Terms';
-import Privacy from '../pages/legal/Privacy';
-import Refund from '../pages/legal/Refund';
-import FAQ from '../pages/FAQ';
-import NotFound from '../pages/NotFound';
-import Signup from '../components/Signup';
-import ForgotPassword from '../components/ForgotPassword';
+// Lazy load components
+const Home = lazy(() => import('../pages/Home'));
+const About = lazy(() => import('../pages/About'));
+const Products = lazy(() => import('../pages/Products'));
+const Contact = lazy(() => import('../pages/Contact'));
+const Login = lazy(() => import('../components/Login'));
+const Dashboard = lazy(() => import('../pages/Dashboard'));
+const Profile = lazy(() => import('../pages/Profile'));
+const Terms = lazy(() => import('../pages/legal/Terms'));
+const Privacy = lazy(() => import('../pages/legal/Privacy'));
+const Refund = lazy(() => import('../pages/legal/Refund'));
+const FAQ = lazy(() => import('../pages/FAQ'));
+const NotFound = lazy(() => import('../pages/NotFound'));
+const Signup = lazy(() => import('../components/Signup'));
+const ForgotPassword = lazy(() => import('../components/ForgotPassword'));
+const VerifyEmail = lazy(() => import('../components/VerifyEmail'));
+const EmailVerification = lazy(() => import('../pages/auth/EmailVerification'));
+
+// Loading component
+const LoadingSpinner = () => (
+  <div className="flex items-center justify-center min-h-[60vh]">
+    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 dark:border-white"></div>
+  </div>
+);
 
 const AppRoutes = () => {
   return (
     <Routes>
-      {/* Public Routes */}
-      <Route
-        path={ROUTES.HOME}
-        element={
-          <Layout>
-            <PublicRoute />
-          </Layout>
-        }
-      >
-        <Route index element={<Home />} />
-        <Route path={ROUTES.ABOUT} element={<About />} />
-        <Route path={ROUTES.PRODUCTS} element={<Products />} />
-        <Route path={ROUTES.CONTACT} element={<Contact />} />
-        <Route path={ROUTES.AUTH.LOGIN} element={<Login />} />
-        <Route path={ROUTES.AUTH.SIGNUP} element={<Signup />} />
-        <Route path={ROUTES.AUTH.FORGOT_PASSWORD} element={<ForgotPassword />} />
-        
-        {/* Legal Pages */}
-        <Route path={ROUTES.LEGAL.TERMS} element={<Terms />} />
-        <Route path={ROUTES.LEGAL.PRIVACY} element={<Privacy />} />
-        <Route path={ROUTES.LEGAL.REFUND} element={<Refund />} />
-        <Route path={ROUTES.FAQ} element={<FAQ />} />
-      </Route>
+      <Route element={<Layout />}>
+        <Route
+          element={
+            <Suspense fallback={<LoadingSpinner />}>
+              <Outlet />
+            </Suspense>
+          }
+        >
+          {/* Public Routes */}
+          <Route index element={<Home />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/products" element={<Products />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/terms" element={<Terms />} />
+          <Route path="/privacy" element={<Privacy />} />
+          <Route path="/refund" element={<Refund />} />
+          <Route path="/faq" element={<FAQ />} />
+          <Route path="/verify-email" element={<VerifyEmail />} />
 
-      {/* Protected Routes */}
-      <Route
-        path="/dashboard"
-        element={
-          <Layout>
-            <PrivateRoute />
-          </Layout>
-        }
-      >
-        <Route index element={<Dashboard />} />
-        <Route path="profile" element={<Profile />} />
-      </Route>
+          {/* Protected Routes */}
+          <Route element={<PrivateRoute />}>
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/profile" element={<Profile />} />
+          </Route>
 
-      {/* 404 Route */}
-      <Route
-        path="*"
-        element={
-          <Layout>
-            <NotFound />
-          </Layout>
-        }
-      />
+          {/* Email Verification Route */}
+          <Route path="/auth/verify/:token" element={<EmailVerification />} />
+
+          {/* 404 Route */}
+          <Route path="*" element={<NotFound />} />
+        </Route>
+      </Route>
     </Routes>
   );
 };

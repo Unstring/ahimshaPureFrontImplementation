@@ -1,83 +1,29 @@
 import { createSlice } from '@reduxjs/toolkit';
 
+const initialState = {
+  isAuthenticated: false,
+  token: localStorage.getItem('token') || null,
+  user: JSON.parse(localStorage.getItem('user')) || null,
+};
+
 const authSlice = createSlice({
   name: 'auth',
-  initialState: {
-    isAuthenticated: false,
-    user: null,
-    loading: false,
-    error: null,
-  },
+  initialState,
   reducers: {
-    loginStart: (state) => {
-      state.loading = true;
-      state.error = null;
-    },
-    loginSuccess: (state, action) => {
+    loginUser: (state, action) => {
       state.isAuthenticated = true;
-      state.user = action.payload;
-      state.loading = false;
-      state.error = null;
-    },
-    loginFailure: (state, action) => {
-      state.loading = false;
-      state.error = action.payload;
+      state.token = action.payload.token;
+      state.user = action.payload.user;
     },
     logoutUser: (state) => {
       state.isAuthenticated = false;
+      state.token = null;
       state.user = null;
-      state.loading = false;
-      state.error = null;
-    },
-    registerStart: (state) => {
-      state.loading = true;
-      state.error = null;
-    },
-    registerSuccess: (state, action) => {
-      state.isAuthenticated = true;
-      state.user = action.payload;
-      state.loading = false;
-      state.error = null;
-    },
-    registerFailure: (state, action) => {
-      state.loading = false;
-      state.error = action.payload;
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
     },
   },
 });
 
-export const {
-  loginStart,
-  loginSuccess,
-  loginFailure,
-  logoutUser,
-  registerStart,
-  registerSuccess,
-  registerFailure,
-} = authSlice.actions;
-
-// Async thunk action for registration
-export const registerUser = (userData) => async (dispatch) => {
-  try {
-    dispatch(registerStart());
-    // Add your registration API call here
-    // const response = await api.register(userData);
-    // dispatch(registerSuccess(response.data));
-  } catch (error) {
-    dispatch(registerFailure(error.message));
-  }
-};
-
-// Async thunk action for login
-export const loginUser = (credentials) => async (dispatch) => {
-  try {
-    dispatch(loginStart());
-    // Add your login API call here
-    // const response = await api.login(credentials);
-    // dispatch(loginSuccess(response.data));
-  } catch (error) {
-    dispatch(loginFailure(error.message));
-  }
-};
-
+export const { loginUser, logoutUser } = authSlice.actions;
 export default authSlice.reducer;

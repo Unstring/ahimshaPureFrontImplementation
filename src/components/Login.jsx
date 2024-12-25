@@ -1,60 +1,44 @@
-import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
-import { loginUser } from '../store/slices/authSlice';
-import { login, getPublicKey } from '../services/authService';
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
+import { useAuth } from '../hooks/useAuth';
+import { login } from '../services/authService';
 import Toast from './common/Toast';
+import PasswordInput from './common/PasswordInput';
 
 const Login = () => {
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const [formData, setFormData] = useState({
-    email: '',
-    password: ''
-  });
+  const { login: authLogin } = useAuth();
+  const [formData, setFormData] = useState({ email: '', password: '' });
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
-
-  useEffect(() => {
-    // Fetch public key when component mounts
-    getPublicKey().catch(err => {
-      Toast.error('Failed to initialize secure connection');
-    });
-  }, []);
-
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    setIsLoading(true);
     
     try {
       const response = await login(formData);
-      Toast.success('Login successful! Welcome back!');
-      dispatch(loginUser(response.data)); // Assuming this is how you handle login state
+      const success = await authLogin(response);
       
-      // Redirect to dashboard after a short delay
-      setTimeout(() => {
-        navigate('/dashboard');
-      }, 1000);
+      if (!success) {
+        throw new Error('Login failed');
+      }
     } catch (err) {
-      const errorMessage = err.response?.data?.message || err.message || 'Login failed. Please try again.';
+      const errorMessage = err.response?.data?.message || err.message || 'Login failed';
       Toast.error(errorMessage);
       setError(errorMessage);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
     <div className="max-w-[85rem] px-4 py-10 sm:px-6 lg:px-8 lg:py-14 mx-auto">
-      <div className="mt-7 bg-white border border-gray-200 rounded-xl shadow-sm dark:bg-neutral-900 dark:border-neutral-700 max-w-md mx-auto">
+      <div className="mt-7 border border-gray-200 rounded-xl shadow-sm  dark:border-gray-700 max-w-md mx-auto">
         <div className="p-4 sm:p-7">
           <div className="text-center">
             <h1 className="block text-2xl font-bold text-gray-800 dark:text-white">Sign in</h1>
-            <p className="mt-2 text-sm text-gray-600 dark:text-neutral-400">
+            <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
               Don't have an account yet?
               <Link 
                 to="/signup" 
@@ -69,7 +53,7 @@ const Login = () => {
             {/* Google Sign In Button */}
             <button
               type="button"
-              className="w-full py-3 px-4 inline-flex justify-center items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-white dark:hover:bg-neutral-800 dark:focus:bg-neutral-800"
+              className="w-full py-3 px-4 inline-flex justify-center items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 text-gray-800 shadow-sm hover:bg-gray-50 focus:outline-none focus:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:border-gray-700 dark:text-white dark:hover:bg-gray-800 dark:focus:bg-gray-800"
             >
               <svg className="w-4 h-auto" width="46" height="47" viewBox="0 0 46 47" fill="none">
                 <path d="M46 24.0287C46 22.09 45.8533 20.68 45.5013 19.2112H23.4694V27.9356H36.4069C36.1429 30.1094 34.7347 33.37 31.5957 35.5731L31.5663 35.8669L38.5191 41.2719L38.9885 41.3306C43.4477 37.2181 46 31.1669 46 24.0287Z" fill="#4285F4"/>
@@ -80,7 +64,7 @@ const Login = () => {
               Sign in with Google
             </button>
 
-            <div className="py-3 flex items-center text-xs text-gray-400 uppercase before:flex-1 before:border-t before:border-gray-200 before:me-6 after:flex-1 after:border-t after:border-gray-200 after:ms-6 dark:text-neutral-500 dark:before:border-neutral-600 dark:after:border-neutral-600">
+            <div className="py-3 flex items-center text-xs text-gray-400 uppercase before:flex-1 before:border-t before:border-gray-200 before:me-6 after:flex-1 after:border-t after:border-gray-200 after:ms-6 dark:text-gray-500 dark:before:border-gray-600 dark:after:border-gray-600">
               Or
             </div>
 
@@ -89,19 +73,28 @@ const Login = () => {
               <div className="grid gap-y-4">
                 {/* Email */}
                 <div>
-                  <label htmlFor="email" className="block text-sm mb-2 dark:text-white">
-                    Email address
-                  </label>
+                  <div className="flex justify-between items-center">
+                    <label htmlFor="email" className="block text-sm mb-2 dark:text-white">
+                      Email address
+                    </label>
+                    <Link
+                      to="/verify-email"
+                      className="text-sm text-blue-600 decoration-2 hover:underline focus:outline-none focus:underline font-medium dark:text-blue-500"
+                    >
+                      Verify email
+                    </Link>
+                  </div>
                   <div className="relative">
                     <input
                       type="email"
                       id="email"
                       name="email"
-                      className="py-3 px-4 block w-full border border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
+                      className="py-3 px-4 block w-full border border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-gray-900 dark:border-gray-700 dark:text-gray-400 dark:placeholder-gray-500 dark:focus:ring-gray-600"
                       required
                       aria-describedby="email-error"
                       value={formData.email}
-                      onChange={handleChange}
+                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                      disabled={isLoading}
                     />
                   </div>
                 </div>
@@ -119,18 +112,12 @@ const Login = () => {
                       Forgot password?
                     </Link>
                   </div>
-                  <div className="relative">
-                    <input
-                      type="password"
-                      id="password"
-                      name="password"
-                      className="py-3 px-4 block w-full border border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400 dark:placeholder-neutral-500 dark:focus:ring-neutral-600"
-                      required
-                      aria-describedby="password-error"
-                      value={formData.password}
-                      onChange={handleChange}
-                    />
-                  </div>
+                  <PasswordInput
+                    value={formData.password}
+                    onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                    disabled={isLoading}
+                    showHints={true}
+                  />
                 </div>
 
                 {/* Remember Me */}
@@ -140,7 +127,7 @@ const Login = () => {
                       id="remember-me"
                       name="remember-me"
                       type="checkbox"
-                      className="shrink-0 mt-0.5 border-gray-200 rounded text-blue-600 focus:ring-blue-500 dark:bg-neutral-800 dark:border-neutral-700 dark:checked:bg-blue-500 dark:checked:border-blue-500 dark:focus:ring-offset-gray-800"
+                      className="shrink-0 mt-0.5 border-gray-200 rounded text-blue-600 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:checked:bg-blue-500 dark:checked:border-blue-500 dark:focus:ring-offset-gray-800"
                     />
                   </div>
                   <div className="ml-3">
@@ -150,12 +137,27 @@ const Login = () => {
                   </div>
                 </div>
 
+                {/* Error Display */}
+                {error && (
+                  <div className="text-sm text-red-600 dark:text-red-500">
+                    {error}
+                  </div>
+                )}
+
                 {/* Submit Button */}
                 <button
                   type="submit"
-                  className="w-full py-3 px-4 inline-flex justify-center items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none"
+                  className="w-full py-3 px-4 inline-flex justify-center items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none dark:focus:ring-offset-gray-800"
+                  disabled={isLoading}
                 >
-                  Sign in
+                  {isLoading ? (
+                    <>
+                      <span className="animate-spin inline-block size-4 border-[2px] border-current border-t-transparent text-white rounded-full" role="status" aria-label="loading"></span>
+                      Signing in...
+                    </>
+                  ) : (
+                    'Sign in'
+                  )}
                 </button>
               </div>
             </form>

@@ -15,7 +15,9 @@ export const API_ENDPOINTS = {
     VERIFY_EMAIL: '/auth/verify-email',
     RESEND_VERIFICATION: '/auth/resend-verification',
     FORGOT_PASSWORD: '/auth/forgot-password',
+    VERIFY_RESET_CODE: '/auth/verify-reset-code',
     RESET_PASSWORD: '/auth/reset-password',
+    EMAIL_VERIFICATION: '/auth/verify-email',
   },
   USER: {
     PROFILE: '/user/profile',
@@ -29,6 +31,9 @@ export const API_ENDPOINTS = {
     LIST: '/orders',
     CREATE: '/orders/create',
     DETAILS: '/orders/:id',
+  },
+  FILES: {
+    PUBLIC_KEY: '/files/applicationpublickey',
   },
 };
 

@@ -2,6 +2,7 @@ import { Link, NavLink, useLocation } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { logoutUser } from '../../store/slices/authSlice';
 import { useEffect } from 'react';
+import Logo from '../common/Logo';
 
 const Header = () => {
   const dispatch = useDispatch();
@@ -79,12 +80,15 @@ const Header = () => {
 
   return (
     <header className="flex flex-wrap lg:justify-start lg:flex-nowrap z-50 w-full py-2 backdrop-blur-md
-    relative bg-white/80 lg:bg-transparent lg:backdrop-blur-none dark:bg-neutral-900 dark:lg:bg-transparent">
+    relative bg-white/80 lg:bg-transparent lg:backdrop-blur-none dark:bg-gray-900 dark:lg:bg-transparent">
       <nav className="max-w-[85rem] flex flex-wrap basis-full items-center w-full mx-auto px-4 sm:px-6 lg:px-8">
         {/* Logo */}
         <div className="flex-none">
-          <Link to="/" className="flex-none text-xl font-bold text-gray-800 dark:text-white">
-            AhimshaPure.com
+          <Link to="/" className="flex-none inline-block text-xl font-bold text-gray-800 dark:text-white">
+            <div className="flex items-center gap-2">
+              <Logo className="w-10 h-10" />
+              <span>Ahimsa Pure</span>
+            </div>
           </Link>
         </div>
 
@@ -97,7 +101,7 @@ const Header = () => {
               className={({ isActive }) => 
                 `font-medium ${isActive 
                   ? 'text-blue-600 dark:text-blue-500' 
-                  : 'text-gray-800 hover:text-blue-600 dark:text-neutral-200 dark:hover:text-blue-500'
+                  : 'text-gray-800 hover:text-blue-600 dark:text-gray-200 dark:hover:text-blue-500'
                 }`
               }
             >
@@ -108,7 +112,7 @@ const Header = () => {
               className={({ isActive }) => 
                 `font-medium ${isActive 
                   ? 'text-blue-600 dark:text-blue-500' 
-                  : 'text-gray-800 hover:text-blue-600 dark:text-neutral-200 dark:hover:text-blue-500'
+                  : 'text-gray-800 hover:text-blue-600 dark:text-gray-200 dark:hover:text-blue-500'
                 }`
               }
             >
@@ -119,7 +123,7 @@ const Header = () => {
               className={({ isActive }) => 
                 `font-medium ${isActive 
                   ? 'text-blue-600 dark:text-blue-500' 
-                  : 'text-gray-800 hover:text-blue-600 dark:text-neutral-200 dark:hover:text-blue-500'
+                  : 'text-gray-800 hover:text-blue-600 dark:text-gray-200 dark:hover:text-blue-500'
                 }`
               }
             >
@@ -130,7 +134,7 @@ const Header = () => {
               className={({ isActive }) => 
                 `font-medium ${isActive 
                   ? 'text-blue-600 dark:text-blue-500' 
-                  : 'text-gray-800 hover:text-blue-600 dark:text-neutral-200 dark:hover:text-blue-500'
+                  : 'text-gray-800 hover:text-blue-600 dark:text-gray-200 dark:hover:text-blue-500'
                 }`
               }
             >
@@ -140,7 +144,7 @@ const Header = () => {
 
           {/* Divider */}
           <div className="hidden lg:block lg:mx-3">
-            <div className="h-4 w-px bg-gray-200 dark:bg-neutral-700"></div>
+            <div className="h-4 w-px bg-gray-200 dark:bg-gray-700"></div>
           </div>
 
           {/* Right Side Items */}
@@ -208,40 +212,69 @@ const Header = () => {
 
             {/* Auth Button */}
             {isAuthenticated ? (
-              <div className="hs-dropdown relative inline-flex">
+              <div className="hs-dropdown [--placement:bottom-right] relative inline-flex">
                 <button
                   type="button"
-                  className="inline-flex justify-center items-center size-9 text-sm font-semibold rounded-lg border border-gray-200 text-gray-800 hover:bg-gray-100 disabled:opacity-50 disabled:pointer-events-none dark:border-gray-700 dark:text-white dark:hover:bg-gray-700 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600"
+                  className="hs-dropdown-toggle py-2 px-3 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 text-gray-800 shadow-sm hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:border-gray-700 dark:text-white dark:hover:bg-gray-700"
                   data-hs-dropdown-toggle
                 >
                   <svg className="size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/>
                     <circle cx="12" cy="7" r="4"/>
                   </svg>
+                  <span>{user?.firstName || 'User'}</span>
+                  <svg className="hs-dropdown-open:rotate-180 size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="m6 9 6 6 6-6"/>
+                  </svg>
                 </button>
-                <div className="hs-dropdown-menu hidden transition-[opacity,margin] duration hs-dropdown-open:opacity-100 opacity-0 min-w-[15rem] bg-white shadow-md rounded-lg p-2 mt-2 dark:bg-gray-800 dark:border dark:border-gray-700" aria-labelledby="hs-dropdown-custom-trigger">
-                  <div className="py-2 px-3 text-sm text-gray-800 dark:text-gray-300">
-                    Signed in as <span className="font-semibold">{user?.name}</span>
+
+                <div className="hs-dropdown-menu transition-[opacity,margin] duration hs-dropdown-open:opacity-100 opacity-0 hidden min-w-50 shadow-md bg-white rounded-lg mt-2 dark:bg-black dark:border dark:border-gray-700" role="menu">
+                  <div className="py-3 px-4 border-b border-gray-200 dark:border-gray-700">
+                    <p className="text-sm text-gray-500 dark:text-gray-400">Signed in as</p>
+                    <p className="text-sm font-medium text-gray-800 dark:text-gray-300">{user?.email}</p>
                   </div>
-                  <div className="my-2 border-t border-gray-100 dark:border-gray-700"></div>
-                  <Link to="/dashboard" className="flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-gray-300">
-                    Dashboard
-                  </Link>
-                  <Link to="/profile" className="flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-gray-300">
-                    Profile
-                  </Link>
-                  <div className="my-2 border-t border-gray-100 dark:border-gray-700"></div>
-                  <button
-                    onClick={handleLogout}
-                    className="flex w-full items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-red-600 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:text-red-500 dark:hover:bg-gray-700"
-                  >
-                    Logout
-                  </button>
+                  <div className="p-1 space-y-0.5">
+                    <Link to="/dashboard" className="flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-300 dark:focus:bg-gray-700">
+                      <svg className="size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <rect width="18" height="18" x="3" y="3" rx="2"/>
+                        <path d="M3 9h18"/>
+                        <path d="M9 21V9"/>
+                      </svg>
+                      Dashboard
+                    </Link>
+                    <Link to="/profile" className="flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-300 dark:focus:bg-gray-700">
+                      <svg className="size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/>
+                        <circle cx="12" cy="7" r="4"/>
+                      </svg>
+                      Profile
+                    </Link>
+                    <Link to="/settings" className="flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-300 dark:focus:bg-gray-700">
+                      <svg className="size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/>
+                        <circle cx="12" cy="12" r="3"/>
+                      </svg>
+                      Settings
+                    </Link>
+                    <div className="my-1 border-t border-gray-200 dark:border-gray-700"></div>
+                    <button
+                      onClick={handleLogout}
+                      className="w-full flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-red-600 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 dark:text-red-500 dark:hover:bg-gray-700 dark:hover:text-red-400"
+                    >
+                      <svg className="size-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                        <polyline points="16 17 21 12 16 7"/>
+                        <line x1="21" y1="12" x2="9" y2="12"/>
+                      </svg>
+                      Logout
+                    </button>
+                  </div>
                 </div>
               </div>
             ) : (
-              <Link to="/login"
-                className="py-[0.5em] px-3 inline-flex items-center text-sm font-semibold rounded-lg border border-gray-200 text-gray-800 hover:bg-gray-100 disabled:opacity-50 disabled:pointer-events-none dark:border-gray-700 dark:text-white dark:hover:bg-gray-700 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600"
+              <Link 
+                to="/login"
+                className="py-2 px-4 inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600"
               >
                 Login
               </Link>
@@ -271,7 +304,7 @@ const Header = () => {
               className={({ isActive }) => 
                 `font-medium ${isActive 
                   ? 'text-blue-600 dark:text-blue-500' 
-                  : 'text-gray-800 hover:text-blue-600 dark:text-neutral-200 dark:hover:text-blue-500'
+                  : 'text-gray-800 hover:text-blue-600 dark:text-gray-200 dark:hover:text-blue-500'
                 }`
               }
             >
@@ -282,7 +315,7 @@ const Header = () => {
               className={({ isActive }) => 
                 `font-medium ${isActive 
                   ? 'text-blue-600 dark:text-blue-500' 
-                  : 'text-gray-800 hover:text-blue-600 dark:text-neutral-200 dark:hover:text-blue-500'
+                  : 'text-gray-800 hover:text-blue-600 dark:text-gray-200 dark:hover:text-blue-500'
                 }`
               }
             >
@@ -293,7 +326,7 @@ const Header = () => {
               className={({ isActive }) => 
                 `font-medium ${isActive 
                   ? 'text-blue-600 dark:text-blue-500' 
-                  : 'text-gray-800 hover:text-blue-600 dark:text-neutral-200 dark:hover:text-blue-500'
+                  : 'text-gray-800 hover:text-blue-600 dark:text-gray-200 dark:hover:text-blue-500'
                 }`
               }
             >
@@ -304,7 +337,7 @@ const Header = () => {
               className={({ isActive }) => 
                 `font-medium ${isActive 
                   ? 'text-blue-600 dark:text-blue-500' 
-                  : 'text-gray-800 hover:text-blue-600 dark:text-neutral-200 dark:hover:text-blue-500'
+                  : 'text-gray-800 hover:text-blue-600 dark:text-gray-200 dark:hover:text-blue-500'
                 }`
               }
             >

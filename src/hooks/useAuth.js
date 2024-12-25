@@ -1,27 +1,44 @@
-import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
-import { loginUser } from '../store/slices/authSlice';
+import { useSelector, useDispatch } from 'react-redux';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { loginUser, logoutUser } from '../store/slices/authSlice';
+import Toast from '../components/common/Toast';
 
 export const useAuth = () => {
-  const navigate = useNavigate();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const auth = useSelector((state) => state.auth);
 
-  useEffect(() => {
-    const authState = localStorage.getItem('authState');
-    if (authState) {
-      try {
-        const state = JSON.parse(authState);
-        if (state.isAuthenticated && state.token) {
-          dispatch(loginUser({
-            user: state.user,
-            token: state.token
-          }));
-        }
-      } catch (e) {
-        localStorage.removeItem('authState');
-        navigate('/login');
+  const login = async (response) => {
+    try {
+      if (response?.status === 'success' && response?.data) {
+        const { token, user } = response.data;
+        dispatch(loginUser({ token, user }));
+        Toast.success(response.message || 'Login successful!');
+        
+        // Get redirect path or default to dashboard
+        const from = location.state?.from?.pathname || '/dashboard';
+        navigate(from, { replace: true });
+        return true;
       }
+      return false;
+    } catch (error) {
+      Toast.error('Login failed');
+      return false;
     }
-  }, [dispatch, navigate]);
+  };
+
+  const logout = () => {
+    dispatch(logoutUser());
+    navigate('/login');
+  };
+
+  return {
+    ...auth,
+    login,
+    logout,
+    isAuthenticated: auth.isAuthenticated,
+    user: auth.user,
+    token: auth.token
+  };
 }; 
