@@ -19,5 +19,5 @@ jobs:
           username: ${{ secrets.USERNAME }}
           password: ${{ secrets.PASSWORD }}
           local-dir: ./dist/
-          server-dir: /frontendImplementation  # or your specific remote directory
+          server-dir: /frontendImplementation/  # or your specific remote directory
           dangerous-clean-slate: false  # Set to true if you want to delete remote files first
