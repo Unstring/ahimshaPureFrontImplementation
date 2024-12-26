@@ -1,0 +1,50 @@
+.toastify {
+  background: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  min-width: 280px !important;
+  max-width: 330px !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+}
+
+/* Make the toast backgrounds more transparent */
+.toastify [class*="bg-"] {
+  background-color: rgba(255, 255, 255, 0.8) !important;
+}
+
+/* Dark mode transparent backgrounds */
+.dark .toastify [class*="dark:bg-"] {
+  background-color: rgba(0, 0, 0, 0.5) !important;
+}
+
+.toastify .toast-close {
+  display: none !important;
+}
+
+/* Spacing between stacked toasts */
+.toastify + .toastify {
+  margin-top: 0.75rem !important;
+}
+
+/* Right spacing */
+.toastify.toastify-right {
+  right: 1rem !important;
+}
+
+/* Initial position for animation */
+.toastify.toastify-top {
+  transform: translateY(0) !important;
+}
+
+/* Animation classes */
+.toastify.on {
+  opacity: 1 !important;
+  transition: all 0.3s ease-in-out !important;
+}
+
+.toastify:not(.on) {
+  opacity: 0 !important;
+  transform: translateY(-100%) !important;
+  transition: all 0.3s ease-in-out !important;
+} 
