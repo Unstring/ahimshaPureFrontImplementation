@@ -3,6 +3,7 @@
 
 <head>
   <meta charset="UTF-8" />
+  <meta http-equiv="Content-Security-Policy" content="default-src * 'unsafe-inline' 'unsafe-eval' data: blob:;">
   <!-- Primary Meta Tags -->
   <title>AhimshaPure - Traditional & Pure Organic Ghee</title>
   <meta name="title" content="AhimshaPure - Traditional & Pure Organic Ghee">
@@ -64,7 +65,15 @@
           }
       </style>
   </noscript>
-  <script type="module" crossorigin src="/assets/index-IX3rnzeH.js"></script>
+
+  <!-- Google Sign-In -->
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <script src="https://apis.google.com/js/platform.js"></script>
+  <meta name="google-signin-client_id" content="41687330401-ap0m3hf3b1ta5uqtukv7pb94fiek2bfb.apps.googleusercontent.com">
+
+  <!-- Apple Sign-In -->
+  <script type="text/javascript" src="https://appleid.cdn-apple.com/appleauth/static/jsapi/appleid/1/en_US/appleid.auth.js" async defer></script>
+  <script type="module" crossorigin src="/assets/index-DswFmZ-Y.js"></script>
   <link rel="stylesheet" crossorigin href="/assets/index-DPuq7glV.css">
 </head>
 

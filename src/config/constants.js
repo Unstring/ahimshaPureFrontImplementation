@@ -18,6 +18,9 @@ export const API_ENDPOINTS = {
     VERIFY_RESET_CODE: '/auth/verify-reset-code',
     RESET_PASSWORD: '/auth/reset-password',
     EMAIL_VERIFICATION: '/auth/verify-email',
+    GOOGLE_SIGNUP: '/auth/google/signup',
+    GOOGLE_SIGNIN: '/auth/google/signin',
+    GOOGLE: '/auth/google',
   },
   USER: {
     PROFILE: '/user/profile',

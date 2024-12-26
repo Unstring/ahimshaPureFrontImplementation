@@ -23,10 +23,19 @@ const encryptData = async (data) => {
     try {
         const dataString = JSON.stringify(data);
         const publicKey = forge.pki.publicKeyFromPem(publicKeyPem);
-        const buffer = forge.util.createBuffer(dataString, 'utf8');
-        const encrypted = publicKey.encrypt(buffer.getBytes(), 'RSAES-PKCS1-V1_5');
         
-        return forge.util.encode64(encrypted);
+        // Split the data into chunks that RSA can handle
+        const maxLength = 245; // Maximum length for RSA-2048 with PKCS#1 v1.5 padding
+        const dataBytes = forge.util.encodeUtf8(dataString);
+        const chunks = [];
+        
+        for (let i = 0; i < dataBytes.length; i += maxLength) {
+            const chunk = dataBytes.slice(i, i + maxLength);
+            const encrypted = publicKey.encrypt(chunk, 'RSAES-PKCS1-V1_5');
+            chunks.push(forge.util.encode64(encrypted));
+        }
+        
+        return chunks.join('.');
     } catch (error) {
         console.error('Encryption error:', error);
         throw error;
@@ -102,6 +111,86 @@ export const resetPassword = async (resetToken, newPassword) => {
     try {
         const encryptedData = await encryptData({ resetToken, newPassword });
         const response = await axios.post(`${API_CONFIG.BASE_URL}${API_ENDPOINTS.AUTH.RESET_PASSWORD}`, {
+            payload: encryptedData
+        });
+        return response.data;
+    } catch (error) {
+        throw error.response?.data || error;
+    }
+};
+
+export const googleAuthSignUp = async (token) => {
+    try {
+        // Extract necessary information from the token
+        const tokenPayload = JSON.parse(atob(token.split('.')[1]));
+        
+        console.log({ tokenPayload });
+        
+        const authData = {
+            // token: token,
+            email: tokenPayload.email,
+            name: tokenPayload.name,
+            picture: tokenPayload.picture,
+            // baseUrl: window.location.origin + "/auth/verify/"
+        };
+        console.log({ authData });
+        
+        const encryptedData = await encryptData({authData});
+        console.log({ encryptedData });
+        
+        const response = await axios.post(`${API_CONFIG.BASE_URL}${API_ENDPOINTS.AUTH.GOOGLE_SIGNUP}`, {
+            payload: token
+        }, {
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            }
+        });
+        return response.data;
+    } catch (error) {
+        console.error('Google Auth Error:', error);
+        throw error.response?.data || error;
+    }
+};
+
+export const googleAuthSignIn = async (token) => {
+    try {
+        // Extract necessary information from the token
+        const tokenPayload = JSON.parse(atob(token.split('.')[1]));
+        
+        console.log({ tokenPayload });
+        
+        const authData = {
+            // token: token,
+            email: tokenPayload.email,
+            name: tokenPayload.name,
+            picture: tokenPayload.picture,
+            // baseUrl: window.location.origin + "/auth/verify/"
+        };
+        console.log({ authData });
+        
+        const encryptedData = await encryptData({authData});
+        console.log({ encryptedData });
+        
+        const response = await axios.post(`${API_CONFIG.BASE_URL}${API_ENDPOINTS.AUTH.GOOGLE_SIGNIN}`, {
+            payload: token
+        }, {
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            }
+        });
+        return response.data;
+    } catch (error) {
+        console.error('Google Auth Error:', error);
+        throw error.response?.data || error;
+    }
+};
+
+export const appleAuth = async (token) => {
+    try {
+        const encryptedData = await encryptData({ token });
+        const response = await axios.post(`${API_CONFIG.BASE_URL}${API_ENDPOINTS.AUTH.APPLE}`, {
             payload: encryptedData
         });
         return response.data;

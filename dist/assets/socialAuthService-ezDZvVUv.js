@@ -1,0 +1,1 @@
+let i=!1;const n=()=>new Promise((e,t)=>{if(i){e(window.AppleID.auth);return}try{window.AppleID.auth.init({clientId:"your_apple_client_id_here",scope:"name email",redirectURI:`${window.location.origin}/auth/callback`,state:"origin:web",usePopup:!0}),i=!0,e(window.AppleID.auth)}catch{t(new Error("Failed to initialize Apple Auth"))}});export{n as i};
