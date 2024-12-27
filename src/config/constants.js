@@ -38,6 +38,15 @@ export const API_ENDPOINTS = {
   FILES: {
     PUBLIC_KEY: '/files/applicationpublickey',
   },
+  BANNERS: {
+    LIST: '/banners',
+    ACTIVE: '/banners/active',
+    DETAIL: '/banners',
+    CREATE: '/banners',
+    UPDATE: '/banners',
+    DELETE: '/banners',
+    TOGGLE: '/banners/toggle'
+  },
 };
 
 // External URLs
@@ -77,4 +86,8 @@ export const ROUTES = {
     REFUND: '/refund',
   },
   FAQ: '/faq',
+  SETTINGS: {
+    ROOT: '/settings',
+    BANNERS: '/settings/banners',
+  },
 }; 

@@ -23,6 +23,8 @@ const Signup = lazy(() => import('../components/Signup'));
 const ForgotPassword = lazy(() => import('../components/ForgotPassword'));
 const VerifyEmail = lazy(() => import('../components/VerifyEmail'));
 const EmailVerification = lazy(() => import('../pages/auth/EmailVerification'));
+const Settings = lazy(() => import('../pages/Settings'));
+const BannerManagement = lazy(() => import('../pages/BannerManagement'));
 
 // Loading component
 const LoadingSpinner = () => (
@@ -60,6 +62,8 @@ const AppRoutes = () => {
           <Route element={<PrivateRoute />}>
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/profile" element={<Profile />} />
+            <Route path="/settings" element={<Settings />} />
+            <Route path="/settings/banners" element={<BannerManagement />} />
           </Route>
 
           {/* Email Verification Route */}
